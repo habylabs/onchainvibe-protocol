@@ -13,6 +13,8 @@ contract Vibe is ERC20, Ownable, ERC20Permit {
 
     uint256 public dropsCount; // Number of airdrops made
 
+    event Drop(address indexed dropper, uint256 dropCount, uint256 amount);
+
     constructor(address _owner)
         ERC20("Vibe", "VIBE")
         Ownable(_owner)
@@ -24,9 +26,15 @@ contract Vibe is ERC20, Ownable, ERC20Permit {
       _mint(_owner, DROPPER_BASE_FEE + LP_SUPPLY);
     }
 
+    function getDropCount() public view returns (uint256) {
+      return dropsCount;
+    }
+
     function drop() public onlyOwner {
       dropsCount += 1;
       _mint(DROPPER, DROPPER_BASE_SUPPLY * dropsCount);
       _mint(owner(), DROPPER_BASE_FEE * dropsCount);
+
+      emit Drop(DROPPER, dropsCount, DROPPER_BASE_SUPPLY * dropsCount);
     }
 }
