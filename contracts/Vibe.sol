@@ -6,7 +6,7 @@ import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/token/ERC20/extensions/ERC20Permit.sol";
 
 contract Vibe is ERC20, Ownable, ERC20Permit {
-    address public constant DROPPER = 0x000000000000000000000000000000000000dEaD; // Address that will airdrop tokens to holders
+    address public constant DROPPER = 0x5FfeB8f6057d057FE5CBD22936b11a5C1068ED01; // Address that will airdrop tokens to holders
     uint256 public constant DROPPER_BASE_SUPPLY = 189_000_000 ether;
     uint256 public constant DROPPER_BASE_FEE = 21_000_000 ether;
     uint256 public constant LP_SUPPLY = 2_100_000_000 ether;
