@@ -1,5 +1,5 @@
 // SPDX-License-Identifier: MIT
-pragma solidity ^0.8.20;
+pragma solidity ^0.8.27;
 
 import "@openzeppelin/contracts/token/ERC20/ERC20.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
@@ -16,6 +16,7 @@ contract Vibe is ERC20, Ownable, ERC20Permit {
     uint256 public dropsCount; // Number of airdrops made
 
     event Drop(address indexed dropper, uint256 dropCount, uint256 amount);
+    event SendVibes(address indexed from, address indexed to, uint256 amount, string message);
 
     constructor(address _owner)
         ERC20("Vibe", "VIBE")
@@ -26,6 +27,38 @@ contract Vibe is ERC20, Ownable, ERC20Permit {
 
       _mint(DROPPER, DROPPER_BASE_SUPPLY);
       _mint(_owner, DROPPER_BASE_FEE + LP_SUPPLY);
+    }
+
+    function transfer(address to, uint256 amount) public virtual override returns (bool) {
+      return _transferWithMessage(msg.sender, to, amount, "");
+    }
+
+    function transfer(address to, uint256 amount, string memory message) public virtual returns (bool) {
+      return _transferWithMessage(msg.sender, to, amount, message);
+    }
+
+    function transferFrom(address from, address to, uint256 amount) public virtual override returns (bool) {
+      return _transferFromWithMessage(from, to, amount, "");
+    }
+
+    function transferFrom(address from, address to, uint256 amount, string memory message) public virtual returns (bool) {
+      return _transferFromWithMessage(from, to, amount, message);
+    }
+
+    function _transferWithMessage(address from, address to, uint256 amount, string memory message) internal virtual returns (bool) {
+      _transfer(from, to, amount);
+      emit Transfer(from, to, amount);
+      emit SendVibes(from, to, amount, message);
+      return true;
+    }
+
+    function _transferFromWithMessage(address from, address to, uint256 amount, string memory message) internal virtual returns (bool) {
+      address spender = _msgSender();
+      _spendAllowance(from, spender, amount);
+      _transfer(from, to, amount);
+      emit Transfer(from, to, amount);
+      emit SendVibes(from, to, amount, message);
+      return true;
     }
 
     function getDropCount() public view returns (uint256) {
